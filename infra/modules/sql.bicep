@@ -6,38 +6,28 @@ param entraAdminLogin string
 param logAnalyticsWorkspaceId string
 param restrictPublicNetworkAccess bool
 
-var configureEntraAdministrator = !empty(entraAdminObjectId) && !empty(entraAdminLogin)
-
-resource server 'Microsoft.Sql/servers@2023-08-01-preview' = {
+resource server 'Microsoft.Sql/servers@2025-02-01-preview' = {
   name: sqlServerName
   location: location
   properties: {
+    administrators: {
+      administratorType: 'ActiveDirectory'
+      login: entraAdminLogin
+      sid: entraAdminObjectId
+      tenantId: subscription().tenantId
+    }
     minimalTlsVersion: '1.2'
     publicNetworkAccess: restrictPublicNetworkAccess ? 'Disabled' : 'Enabled'
     restrictOutboundNetworkAccess: 'Disabled'
   }
 }
 
-resource entraAdministrator 'Microsoft.Sql/servers/administrators@2023-08-01-preview' = if (configureEntraAdministrator) {
-  parent: server
-  name: 'ActiveDirectory'
-  properties: {
-    administratorType: 'ActiveDirectory'
-    login: entraAdminLogin
-    sid: entraAdminObjectId
-    tenantId: subscription().tenantId
-  }
-}
-
-resource entraOnlyAuthentication 'Microsoft.Sql/servers/azureADOnlyAuthentications@2023-08-01-preview' = if (configureEntraAdministrator) {
+resource entraOnlyAuthentication 'Microsoft.Sql/servers/azureADOnlyAuthentications@2025-02-01-preview' = {
   parent: server
   name: 'Default'
   properties: {
     azureADOnlyAuthentication: true
   }
-  dependsOn: [
-    entraAdministrator
-  ]
 }
 
 resource database 'Microsoft.Sql/servers/databases@2023-08-01-preview' = {

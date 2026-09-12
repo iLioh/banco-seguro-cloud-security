@@ -9,11 +9,14 @@ param resourceGroupName string = 'rg-bancoseguro-s5-dev'
 @description('Set true only after private connectivity and administration have been validated.')
 param restrictPublicNetworkAccess bool = false
 
-@description('Microsoft Entra object ID for the Azure SQL administrator. Leave empty during an initial bootstrap if it is not yet known.')
-param sqlEntraAdminObjectId string = ''
+@description('Required Microsoft Entra object ID for the Azure SQL administrator.')
+@minLength(36)
+@maxLength(36)
+param sqlEntraAdminObjectId string
 
-@description('Display name of the Microsoft Entra administrator for Azure SQL.')
-param sqlEntraAdminLogin string = ''
+@description('Required display name of the Microsoft Entra administrator for Azure SQL.')
+@minLength(1)
+param sqlEntraAdminLogin string
 
 var suffix = uniqueString(subscription().id, resourceGroupName)
 var appName = 'app-bancoseguro-dev-${suffix}'
@@ -98,9 +101,7 @@ module sentinel 'modules/sentinel.bicep' = {
   name: 'sentinel'
   scope: resourceGroup
   params: {
-    location: location
     workspaceName: monitoring.outputs.workspaceName
-    workspaceId: monitoring.outputs.workspaceId
   }
 }
 
@@ -111,4 +112,3 @@ output keyVaultName string = keyVault.outputs.vaultName
 output sqlServerName string = sql.outputs.serverName
 output sqlDatabaseName string = sql.outputs.databaseName
 output logAnalyticsWorkspaceName string = monitoring.outputs.workspaceName
-

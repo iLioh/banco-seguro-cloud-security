@@ -1,20 +1,15 @@
-param location string
 param workspaceName string
-param workspaceId string
 
-resource sentinel 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
-  name: 'SecurityInsights(${workspaceName})'
-  location: location
-  plan: {
-    name: 'SecurityInsights(${workspaceName})'
-    product: 'OMSGallery/SecurityInsights'
-    publisher: 'Microsoft'
-    promotionCode: ''
-  }
+resource workspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' existing = {
+  name: workspaceName
+}
+
+resource sentinelOnboarding 'Microsoft.SecurityInsights/onboardingStates@2025-09-01' = {
+  name: 'default'
+  scope: workspace
   properties: {
-    workspaceResourceId: workspaceId
+    customerManagedKey: false
   }
 }
 
-output sentinelSolutionId string = sentinel.id
-
+output onboardingStateId string = sentinelOnboarding.id

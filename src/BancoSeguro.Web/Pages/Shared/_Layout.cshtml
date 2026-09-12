@@ -7,21 +7,27 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header class="topbar">
-        <a class="brand" asp-page="/Index" aria-label="Banco Seguro, inicio">
-            <span class="brand-mark">BS</span>
-            <span>Banco <strong>Seguro</strong></span>
-        </a>
-        <nav aria-label="Navegación principal">
-            <a asp-page="/Dashboard">Dashboard</a>
-            <a asp-page="/Security">Seguridad</a>
-            <a asp-page="/Database">Base de datos</a>
+    <header class="site-header">
+        <div class="topbar">
+            <a class="brand" asp-page="/Index" aria-label="Banco Seguro, inicio">
+                <span class="brand-mark" aria-hidden="true">BS</span>
+                <span class="brand-name">Banco <strong>Seguro</strong><small>Banca Digital</small></span>
+            </a>
+            <span class="secure-session"><span aria-hidden="true">●</span> Entorno seguro</span>
+        </div>
+        <nav class="main-nav" aria-label="Navegación principal">
+            <a asp-page="/Index">Inicio</a>
+            <a asp-page="/Dashboard">Mis cuentas</a>
+            <a asp-page="/Movements">Movimientos</a>
+            <a class="technical-link" asp-page="/Security">Seguridad <small>Demo técnica</small></a>
         </nav>
     </header>
-    <main class="container">
+    <main class="container" id="contenido-principal">
         @RenderBody()
     </main>
-    <footer>BancoSeguro.Web · Acceso protegido con identidad administrada</footer>
+    <footer class="site-footer">
+        <div><strong>Banco Seguro S.A.</strong><span> Banca digital de demostración</span></div>
+        <span>Conexión protegida · Datos ficticios</span>
+    </footer>
 </body>
 </html>
-

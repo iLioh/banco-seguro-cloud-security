@@ -4,13 +4,28 @@
     ViewData["Title"] = "Seguridad";
 }
 <header class="page-head">
-    <span class="eyebrow">Confianza verificable</span>
-    <h1>Controles de seguridad</h1>
-    <p>La aplicación usa identidad en lugar de credenciales estáticas siempre que el servicio lo permite.</p>
+    <div>
+        <span class="eyebrow">Demostración técnica</span>
+        <h1>Seguridad y servicios cloud</h1>
+        <p>Estado técnico de los controles que protegen Banco Seguro Digital.</p>
+    </div>
+    <span class="technical-badge">Vista de laboratorio</span>
 </header>
-<section class="grid">
-    <article class="card"><div class="card-label">Autenticación Azure</div><div class="status ok">DefaultAzureCredential</div><p>Usa Managed Identity automáticamente en App Service.</p></article>
-    <article class="card"><div class="card-label">InternalApiToken disponible</div><div class="status @(Model.TokenAvailable ? "ok" : "warn")">@(Model.TokenAvailable ? "Sí" : "No")</div><p>El valor del secreto nunca se presenta ni se registra.</p></article>
-    <article class="card"><div class="card-label">Transporte</div><div class="status ok">TLS requerido</div><p>HTTPS y validación de certificados para las conexiones externas.</p></article>
+<aside class="technical-notice">Esta sección muestra únicamente estados operativos. No expone secretos, credenciales, cadenas de conexión ni identificadores internos.</aside>
+<section class="technical-grid" aria-label="Estado de controles técnicos">
+    <partial name="_StatusCard" model='("Aplicación", Model.ApplicationStatus)' />
+    <partial name="_StatusCard" model='("Managed Identity", Model.IdentityStatus)' />
+    <partial name="_StatusCard" model='("Azure Key Vault", Model.KeyVaultStatus)' />
+    <partial name="_StatusCard" model='("InternalApiToken", Model.TokenStatus)' />
+    <partial name="_StatusCard" model='("Azure SQL", Model.DatabaseStatus)' />
+    <partial name="_StatusCard" model='("API interna", Model.InternalApiStatus)' />
 </section>
 
+<section class="security-foundation" aria-labelledby="proteccion-integrada">
+    <div><span class="eyebrow">Diseño seguro</span><h2 id="proteccion-integrada">Protección integrada</h2></div>
+    <ul class="security-facts">
+        <li><strong>Identidad sin contraseñas</strong><span>Microsoft Entra ID y Managed Identity</span></li>
+        <li><strong>Conectividad privada</strong><span>VNet Integration y Private Endpoints</span></li>
+        <li><strong>Datos cifrados</strong><span>TLS y validación de certificados</span></li>
+    </ul>
+</section>

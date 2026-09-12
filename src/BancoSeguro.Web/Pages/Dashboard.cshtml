@@ -1,18 +1,94 @@
 @page "/dashboard"
 @model DashboardModel
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Mis cuentas";
+    var customer = Model.Summary.Customer;
+    var primaryAccount = customer?.Accounts.FirstOrDefault();
 }
-<header class="page-head">
-    <span class="eyebrow">Estado operativo</span>
-    <h1>Dashboard de servicios</h1>
-    <p>Vista segura del estado de las integraciones. Nunca muestra credenciales ni secretos.</p>
-</header>
-<section class="grid">
-    <partial name="_StatusCard" model='("Application", Model.ApplicationStatus)' />
-    <partial name="_StatusCard" model='("Managed Identity", Model.IdentityStatus)' />
-    <partial name="_StatusCard" model='("Key Vault", Model.KeyVaultStatus)' />
-    <partial name="_StatusCard" model='("Azure SQL", Model.DatabaseStatus)' />
-    <partial name="_StatusCard" model='("Internal API", Model.InternalApiStatus)' />
-</section>
+@if (customer is null)
+{
+    <header class="page-head">
+        <span class="eyebrow">Mi banca</span>
+        <h1>Resumen bancario</h1>
+        <p>Consulta tus cuentas y movimientos recientes.</p>
+    </header>
+    <section class="empty-state" role="status">
+        <span class="empty-icon" aria-hidden="true">i</span>
+        <h2>Tu información no está disponible por el momento</h2>
+        <p>@Model.Summary.Status.Message</p>
+        <a class="button button-primary" asp-page="/Dashboard">Intentar nuevamente</a>
+    </section>
+}
+else
+{
+    <header class="welcome-head">
+        <div>
+            <span class="eyebrow">Resumen bancario</span>
+            <h1>Hola, @customer.CustomerName</h1>
+            <p>Este es el estado actual de tus productos en Banco Seguro.</p>
+        </div>
+        <span class="customer-segment">Cliente @customer.Segment</span>
+    </header>
 
+    <section class="balance-card" aria-labelledby="saldo-disponible">
+        <div>
+            <span id="saldo-disponible" class="balance-label">Saldo disponible</span>
+            <strong class="balance-amount">@(primaryAccount is null ? "—" : DashboardModel.FormatAmount(primaryAccount.Balance, primaryAccount.Currency))</strong>
+            <span class="balance-detail">En tu cuenta principal</span>
+        </div>
+        <div class="balance-decoration" aria-hidden="true"><span></span><span></span></div>
+    </section>
+
+    <section class="content-section" aria-labelledby="mis-cuentas">
+        <div class="section-heading">
+            <div><span class="eyebrow">Productos</span><h2 id="mis-cuentas">Mis cuentas</h2></div>
+            <span class="item-count">@customer.Accounts.Count @(customer.Accounts.Count == 1 ? "cuenta" : "cuentas")</span>
+        </div>
+        @if (customer.Accounts.Count == 0)
+        {
+            <div class="inline-empty">No hay cuentas asociadas a este cliente.</div>
+        }
+        else
+        {
+            <div class="accounts-grid">
+                @foreach (var account in customer.Accounts)
+                {
+                    <article class="account-card">
+                        <div class="account-card-top">
+                            <span class="account-icon" aria-hidden="true">$</span>
+                            <span class="currency-pill">@account.Currency</span>
+                        </div>
+                        <p>Cuenta de @account.AccountType</p>
+                        <h3>@DashboardModel.MaskAccount(account.AccountId)</h3>
+                        <span class="account-balance-label">Saldo disponible</span>
+                        <strong>@DashboardModel.FormatAmount(account.Balance, account.Currency)</strong>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+
+    <section class="content-section" aria-labelledby="ultimos-movimientos">
+        <div class="section-heading">
+            <div><span class="eyebrow">Actividad reciente</span><h2 id="ultimos-movimientos">Últimos movimientos</h2></div>
+            <a class="text-link" asp-page="/Movements">Ver movimientos <span aria-hidden="true">→</span></a>
+        </div>
+        @if (customer.RecentMovements.Count == 0)
+        {
+            <div class="inline-empty">Aún no hay movimientos para mostrar.</div>
+        }
+        else
+        {
+            <div class="movement-list">
+                @foreach (var movement in customer.RecentMovements)
+                {
+                    <article class="movement-row">
+                        <span class="movement-icon" aria-hidden="true">↕</span>
+                        <div class="movement-main"><strong>@movement.OperationType</strong><span>@movement.OperationDate.ToString("dd MMM yyyy") · Cuenta @DashboardModel.MaskAccount(movement.AccountId)</span></div>
+                        <strong class="movement-amount">@DashboardModel.FormatAmount(movement.Amount, movement.Currency)</strong>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+}

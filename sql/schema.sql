@@ -48,3 +48,4 @@ END;
 
 GRANT SELECT ON OBJECT::dbo.ClientesDemo TO [$(AppServicePrincipalName)];
 GRANT SELECT ON OBJECT::dbo.CuentasDemo TO [$(AppServicePrincipalName)];
+GRANT SELECT ON OBJECT::dbo.OperacionesDemo TO [$(AppServicePrincipalName)];

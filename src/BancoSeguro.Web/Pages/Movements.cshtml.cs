@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BancoSeguro.Web.Pages;
 
-public sealed class DashboardModel(IDatabaseService databaseService) : PageModel
+public sealed class MovementsModel(IDatabaseService databaseService) : PageModel
 {
-    public BankingSummaryResult Summary { get; private set; } =
-        BankingSummaryResult.WithoutData(new(ServiceState.NotConfigured, "Información bancaria no disponible en este entorno"));
+    public MovementsResult Result { get; private set; } =
+        MovementsResult.WithoutData(new(ServiceState.NotConfigured, "Movimientos no disponibles en este entorno"));
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
-        Summary = await databaseService.GetCustomerSummaryAsync(cancellationToken);
+        Result = await databaseService.GetCustomerMovementsAsync(cancellationToken);
     }
 
     public static string MaskAccount(int accountId) => $"••••{accountId % 10000:D4}";

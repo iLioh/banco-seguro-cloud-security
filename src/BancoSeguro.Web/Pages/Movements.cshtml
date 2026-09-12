@@ -1,0 +1,50 @@
+@page "/movements"
+@model MovementsModel
+@{
+    ViewData["Title"] = "Movimientos";
+}
+<header class="page-head movements-head">
+    <div>
+        <span class="eyebrow">Actividad de la cuenta</span>
+        <h1>Movimientos</h1>
+        <p>Consulta el historial de operaciones de tus cuentas.</p>
+    </div>
+    <a class="button button-secondary" asp-page="/Dashboard">Volver a mis cuentas</a>
+</header>
+
+<section class="content-section movements-section" aria-labelledby="historial-movimientos">
+    <div class="section-heading">
+        <div><h2 id="historial-movimientos">Historial reciente</h2><p class="section-copy">Ordenado del más reciente al más antiguo</p></div>
+        @if (Model.Result.Movements.Count > 0)
+        {
+            <span class="item-count">@Model.Result.Movements.Count movimientos</span>
+        }
+    </div>
+    @if (!Model.Result.Status.IsSuccess)
+    {
+        <div class="inline-alert" role="status"><strong>Información no disponible</strong><span>@Model.Result.Status.Message</span></div>
+    }
+    else if (Model.Result.Movements.Count == 0)
+    {
+        <div class="empty-state compact" role="status"><span class="empty-icon" aria-hidden="true">↕</span><h2>Aún no tienes movimientos</h2><p>Las operaciones de tus cuentas aparecerán aquí.</p></div>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="movements-table">
+                <thead><tr><th>Fecha</th><th>Operación</th><th>Cuenta</th><th class="align-right">Monto</th></tr></thead>
+                <tbody>
+                @foreach (var movement in Model.Result.Movements)
+                {
+                    <tr>
+                        <td data-label="Fecha"><time datetime="@movement.OperationDate.ToString("O")">@movement.OperationDate.ToString("dd MMM yyyy, HH:mm")</time></td>
+                        <td data-label="Operación"><strong>@movement.OperationType</strong></td>
+                        <td data-label="Cuenta">Cuenta @MovementsModel.MaskAccount(movement.AccountId)</td>
+                        <td data-label="Monto" class="align-right amount-cell">@MovementsModel.FormatAmount(movement.Amount, movement.Currency)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

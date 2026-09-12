@@ -1,10 +1,19 @@
 @model (string Label, BancoSeguro.Web.Models.ServiceStatus Status)
 @{
     var cssClass = Model.Status.IsSuccess ? "ok" : Model.Status.State is ServiceState.NotConfigured or ServiceState.NotAvailable ? "warn" : "";
+    var statusLabel = Model.Status.State switch
+    {
+        ServiceState.Running => "Operativa",
+        ServiceState.Configured => "Configurada",
+        ServiceState.Connected => "Conectado",
+        ServiceState.Available => "Disponible",
+        ServiceState.NotConfigured => "No configurado",
+        ServiceState.NotAvailable => "No disponible",
+        _ => "Error"
+    };
 }
-<article class="card">
+<article class="technical-card">
     <div class="card-label">@Model.Label</div>
-    <div class="status @cssClass">@Model.Status.State.ToString()</div>
+    <div class="status @cssClass">@statusLabel</div>
     <p>@Model.Status.Message</p>
 </article>
-
