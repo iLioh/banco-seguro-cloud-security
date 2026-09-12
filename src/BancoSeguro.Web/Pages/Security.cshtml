@@ -1,0 +1,16 @@
+@page "/security"
+@model SecurityModel
+@{
+    ViewData["Title"] = "Seguridad";
+}
+<header class="page-head">
+    <span class="eyebrow">Confianza verificable</span>
+    <h1>Controles de seguridad</h1>
+    <p>La aplicación usa identidad en lugar de credenciales estáticas siempre que el servicio lo permite.</p>
+</header>
+<section class="grid">
+    <article class="card"><div class="card-label">Autenticación Azure</div><div class="status ok">DefaultAzureCredential</div><p>Usa Managed Identity automáticamente en App Service.</p></article>
+    <article class="card"><div class="card-label">InternalApiToken disponible</div><div class="status @(Model.TokenAvailable ? "ok" : "warn")">@(Model.TokenAvailable ? "Sí" : "No")</div><p>El valor del secreto nunca se presenta ni se registra.</p></article>
+    <article class="card"><div class="card-label">Transporte</div><div class="status ok">TLS requerido</div><p>HTTPS y validación de certificados para las conexiones externas.</p></article>
+</section>
+

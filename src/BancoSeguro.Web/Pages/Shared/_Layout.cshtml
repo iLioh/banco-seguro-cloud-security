@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Banco Seguro</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" asp-page="/Index" aria-label="Banco Seguro, inicio">
+            <span class="brand-mark">BS</span>
+            <span>Banco <strong>Seguro</strong></span>
+        </a>
+        <nav aria-label="Navegación principal">
+            <a asp-page="/Dashboard">Dashboard</a>
+            <a asp-page="/Security">Seguridad</a>
+            <a asp-page="/Database">Base de datos</a>
+        </nav>
+    </header>
+    <main class="container">
+        @RenderBody()
+    </main>
+    <footer>BancoSeguro.Web · Acceso protegido con identidad administrada</footer>
+</body>
+</html>
+

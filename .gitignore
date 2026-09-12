@@ -1,0 +1,40 @@
+# Build output
+**/bin/
+**/obj/
+artifacts/
+publish/
+
+# IDEs and user state
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local tools and Azure artifacts
+.tools/
+.azure/
+*.publishsettings
+*.pubxml.user
+local.settings.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Secrets and credentials
+secrets.json
+*.secrets.json
+*.pfx
+*.cer
+*.key
+*.pem
+.env
+.env.*
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+

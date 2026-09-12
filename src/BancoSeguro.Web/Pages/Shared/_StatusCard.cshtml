@@ -1,0 +1,10 @@
+@model (string Label, BancoSeguro.Web.Models.ServiceStatus Status)
+@{
+    var cssClass = Model.Status.IsSuccess ? "ok" : Model.Status.State is ServiceState.NotConfigured or ServiceState.NotAvailable ? "warn" : "";
+}
+<article class="card">
+    <div class="card-label">@Model.Label</div>
+    <div class="status @cssClass">@Model.Status.State.ToString()</div>
+    <p>@Model.Status.Message</p>
+</article>
+

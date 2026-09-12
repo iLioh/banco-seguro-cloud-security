@@ -1,0 +1,29 @@
+@page "/database"
+@model DatabaseModel
+@{
+    ViewData["Title"] = "Base de datos";
+    var statusClass = Model.Result.Status.IsSuccess ? "ok" : Model.Result.Status.State == ServiceState.NotConfigured ? "warn" : "";
+}
+<header class="page-head">
+    <span class="eyebrow">Datos protegidos</span>
+    <h1>Azure SQL</h1>
+    <p>Conexión cifrada mediante Microsoft Entra ID y Managed Identity.</p>
+</header>
+<section class="panel">
+    <div class="card-label">Estado de conexión</div>
+    <div class="status @statusClass">@Model.Result.Status.State</div>
+    <p class="muted">@Model.Result.Status.Message</p>
+    @if (Model.Result.Accounts.Count > 0)
+    {
+        <table>
+            <thead><tr><th>Cuenta</th><th>Cliente demo</th><th>Tipo</th><th>Saldo</th><th>Moneda</th></tr></thead>
+            <tbody>
+            @foreach (var account in Model.Result.Accounts)
+            {
+                <tr><td>@account.AccountId</td><td>@account.CustomerName</td><td>@account.AccountType</td><td>@account.Balance.ToString("N2")</td><td>@account.Currency</td></tr>
+            }
+            </tbody>
+        </table>
+    }
+</section>
+
