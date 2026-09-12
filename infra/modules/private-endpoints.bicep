@@ -10,7 +10,7 @@ resource keyVaultPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' =
 }
 
 resource sqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
-  name: 'privatelink.${environment().suffixes.sqlServerHostname}'
+  name: 'privatelink.database.windows.net'
   location: 'global'
 }
 
