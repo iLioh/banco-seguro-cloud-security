@@ -3,6 +3,7 @@ param vnetId string
 param privateEndpointSubnetId string
 param keyVaultId string
 param sqlServerId string
+param internalApiId string
 
 resource keyVaultPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
   name: 'privatelink.vaultcore.azure.net'
@@ -12,6 +13,23 @@ resource keyVaultPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' =
 resource sqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
   name: 'privatelink${environment().suffixes.sqlServerHostname}'
   location: 'global'
+}
+
+resource internalApiPrivateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
+  name: 'privatelink.azurewebsites.net'
+  location: 'global'
+}
+
+resource internalApiDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = {
+  parent: internalApiPrivateDnsZone
+  name: 'link-bancoseguro-vnet'
+  location: 'global'
+  properties: {
+    registrationEnabled: false
+    virtualNetwork: {
+      id: vnetId
+    }
+  }
 }
 
 resource keyVaultDnsLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = {
@@ -110,5 +128,42 @@ resource sqlDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroup
   }
 }
 
+resource internalApiPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
+  name: 'pep-bancoseguro-internal-api'
+  location: location
+  properties: {
+    subnet: {
+      id: privateEndpointSubnetId
+    }
+    privateLinkServiceConnections: [
+      {
+        name: 'internal-api-connection'
+        properties: {
+          privateLinkServiceId: internalApiId
+          groupIds: [
+            'sites'
+          ]
+        }
+      }
+    ]
+  }
+}
+
+resource internalApiDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = {
+  parent: internalApiPrivateEndpoint
+  name: 'default'
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'internal-api-zone'
+        properties: {
+          privateDnsZoneId: internalApiPrivateDnsZone.id
+        }
+      }
+    ]
+  }
+}
+
 output keyVaultPrivateEndpointId string = keyVaultPrivateEndpoint.id
 output sqlPrivateEndpointId string = sqlPrivateEndpoint.id
+output internalApiPrivateEndpointId string = internalApiPrivateEndpoint.id

@@ -107,7 +107,7 @@ module internalApi 'modules/internal-api.bicep' = {
     keyVaultUri: keyVault.outputs.vaultUri
     applicationInsightsConnectionString: monitoring.outputs.applicationInsightsConnectionString
     logAnalyticsWorkspaceId: monitoring.outputs.workspaceId
-    restrictPublicNetworkAccess: false
+    restrictPublicNetworkAccess: true
   }
 }
 
@@ -120,6 +120,7 @@ module privateEndpoints 'modules/private-endpoints.bicep' = {
     privateEndpointSubnetId: network.outputs.privateEndpointSubnetId
     keyVaultId: keyVault.outputs.vaultId
     sqlServerId: sql.outputs.serverId
+    internalApiId: internalApi.outputs.appId
   }
 }
 
