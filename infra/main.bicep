@@ -3,6 +3,9 @@ targetScope = 'subscription'
 @description('Azure region for all resources.')
 param location string = 'chilecentral'
 
+@description('Region for Log Analytics and Microsoft Sentinel.')
+param monitoringLocation string = 'brazilsouth'
+
 @description('Resource group created by this subscription deployment.')
 param resourceGroupName string = 'rg-bancoseguro-s5-dev'
 
@@ -41,6 +44,7 @@ module monitoring 'modules/monitoring.bicep' = {
   scope: resourceGroup
   params: {
     location: location
+    workspaceLocation: monitoringLocation
   }
 }
 

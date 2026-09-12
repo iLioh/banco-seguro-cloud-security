@@ -1,8 +1,9 @@
 param location string
+param workspaceLocation string
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
-  name: 'law-bancoseguro-security'
-  location: location
+  name: 'law-bancoseguro-security-br'
+  location: workspaceLocation
   properties: {
     sku: {
       name: 'PerGB2018'

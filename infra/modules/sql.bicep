@@ -15,6 +15,8 @@ resource server 'Microsoft.Sql/servers@2025-02-01-preview' = {
       login: entraAdminLogin
       sid: entraAdminObjectId
       tenantId: subscription().tenantId
+      principalType: 'User'
+      azureADOnlyAuthentication: true
     }
     minimalTlsVersion: '1.2'
     publicNetworkAccess: restrictPublicNetworkAccess ? 'Disabled' : 'Enabled'
