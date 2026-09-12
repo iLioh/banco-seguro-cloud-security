@@ -7,27 +7,34 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
+    <a class="skip-link" href="#contenido-principal">Saltar al contenido</a>
     <header class="site-header">
         <div class="topbar">
             <a class="brand" asp-page="/Index" aria-label="Banco Seguro, inicio">
-                <span class="brand-mark" aria-hidden="true">BS</span>
-                <span class="brand-name">Banco <strong>Seguro</strong><small>Banca Digital</small></span>
+                <span class="brand-mark" aria-hidden="true"><span>BS</span></span>
+                <span class="brand-name">Banco <strong>Seguro</strong><small>Banca digital</small></span>
             </a>
-            <span class="secure-session"><span aria-hidden="true">●</span> Entorno seguro</span>
+            <div class="header-actions">
+                <span class="secure-session"><span class="session-lock" aria-hidden="true">✓</span> Sesión segura</span>
+                <span class="header-divider" aria-hidden="true"></span>
+                <span class="client-profile">
+                    <span class="client-avatar" aria-hidden="true">CA</span>
+                    <span class="client-name">Cliente Demo<small>Perfil personal</small></span>
+                </span>
+            </div>
         </div>
         <nav class="main-nav" aria-label="Navegación principal">
-            <a asp-page="/Index">Inicio</a>
-            <a asp-page="/Dashboard">Mis cuentas</a>
-            <a asp-page="/Movements">Movimientos</a>
-            <a class="technical-link" asp-page="/Security">Seguridad <small>Demo técnica</small></a>
+            <a class="@(Context.Request.Path == "/" ? "active" : null)" asp-page="/Index">Inicio</a>
+            <a class="@(Context.Request.Path == "/dashboard" ? "active" : null)" asp-page="/Dashboard">Mis cuentas</a>
+            <a class="@(Context.Request.Path == "/movements" ? "active" : null)" asp-page="/Movements">Movimientos</a>
         </nav>
     </header>
     <main class="container" id="contenido-principal">
         @RenderBody()
     </main>
     <footer class="site-footer">
-        <div><strong>Banco Seguro S.A.</strong><span> Banca digital de demostración</span></div>
-        <span>Conexión protegida · Datos ficticios</span>
+        <strong>Banco Seguro S.A.</strong>
+        <span>Demostración académica · Datos ficticios</span>
     </footer>
 </body>
 </html>

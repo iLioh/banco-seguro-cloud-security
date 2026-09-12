@@ -9,16 +9,16 @@
         <h1>Seguridad y servicios cloud</h1>
         <p>Estado técnico de los controles que protegen Banco Seguro Digital.</p>
     </div>
-    <span class="technical-badge">Vista de laboratorio</span>
+    <span class="technical-badge"><span aria-hidden="true">●</span> Vista de laboratorio</span>
 </header>
 <aside class="technical-notice">Esta sección muestra únicamente estados operativos. No expone secretos, credenciales, cadenas de conexión ni identificadores internos.</aside>
 <section class="technical-grid" aria-label="Estado de controles técnicos">
-    <partial name="_StatusCard" model='("Aplicación", Model.ApplicationStatus)' />
     <partial name="_StatusCard" model='("Managed Identity", Model.IdentityStatus)' />
     <partial name="_StatusCard" model='("Azure Key Vault", Model.KeyVaultStatus)' />
-    <partial name="_StatusCard" model='("InternalApiToken", Model.TokenStatus)' />
     <partial name="_StatusCard" model='("Azure SQL", Model.DatabaseStatus)' />
     <partial name="_StatusCard" model='("API interna", Model.InternalApiStatus)' />
+    <partial name="_StatusCard" model='("Aplicación", Model.ApplicationStatus)' />
+    <partial name="_StatusCard" model='("InternalApiToken", Model.TokenStatus)' />
 </section>
 
 <section class="security-foundation" aria-labelledby="proteccion-integrada">

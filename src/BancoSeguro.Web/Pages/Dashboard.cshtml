@@ -8,9 +8,11 @@
 @if (customer is null)
 {
     <header class="page-head">
-        <span class="eyebrow">Mi banca</span>
-        <h1>Resumen bancario</h1>
-        <p>Consulta tus cuentas y movimientos recientes.</p>
+        <div>
+            <span class="eyebrow">Mi banca</span>
+            <h1>Resumen bancario</h1>
+            <p>Consulta tus cuentas y movimientos recientes.</p>
+        </div>
     </header>
     <section class="empty-state" role="status">
         <span class="empty-icon" aria-hidden="true">i</span>
@@ -23,9 +25,9 @@ else
 {
     <header class="welcome-head">
         <div>
-            <span class="eyebrow">Resumen bancario</span>
+            <span class="eyebrow">Mi banca</span>
             <h1>Hola, @customer.CustomerName</h1>
-            <p>Este es el estado actual de tus productos en Banco Seguro.</p>
+            <p>Aquí tienes el resumen de tus productos.</p>
         </div>
         <span class="customer-segment">Cliente @customer.Segment</span>
     </header>
@@ -34,7 +36,7 @@ else
         <div>
             <span id="saldo-disponible" class="balance-label">Saldo disponible</span>
             <strong class="balance-amount">@(primaryAccount is null ? "—" : DashboardModel.FormatAmount(primaryAccount.Balance, primaryAccount.Currency))</strong>
-            <span class="balance-detail">En tu cuenta principal</span>
+            <span class="balance-detail">Cuenta principal · Información actualizada</span>
         </div>
         <div class="balance-decoration" aria-hidden="true"><span></span><span></span></div>
     </section>
@@ -55,7 +57,7 @@ else
                 {
                     <article class="account-card">
                         <div class="account-card-top">
-                            <span class="account-icon" aria-hidden="true">$</span>
+                            <span class="account-icon" aria-hidden="true">▣</span>
                             <span class="currency-pill">@account.Currency</span>
                         </div>
                         <p>Cuenta de @account.AccountType</p>
@@ -83,7 +85,7 @@ else
                 @foreach (var movement in customer.RecentMovements)
                 {
                     <article class="movement-row">
-                        <span class="movement-icon" aria-hidden="true">↕</span>
+                        <span class="movement-icon" aria-hidden="true">↓</span>
                         <div class="movement-main"><strong>@movement.OperationType</strong><span>@movement.OperationDate.ToString("dd MMM yyyy") · Cuenta @DashboardModel.MaskAccount(movement.AccountId)</span></div>
                         <strong class="movement-amount">@DashboardModel.FormatAmount(movement.Amount, movement.Currency)</strong>
                     </article>

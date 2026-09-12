@@ -13,8 +13,8 @@
 </header>
 
 <section class="content-section movements-section" aria-labelledby="historial-movimientos">
-    <div class="section-heading">
-        <div><h2 id="historial-movimientos">Historial reciente</h2><p class="section-copy">Ordenado del más reciente al más antiguo</p></div>
+    <div class="section-heading movements-summary">
+        <div><h2 id="historial-movimientos">Historial reciente</h2><p class="section-copy">Operaciones ordenadas del más reciente al más antiguo</p></div>
         @if (Model.Result.Movements.Count > 0)
         {
             <span class="item-count">@Model.Result.Movements.Count movimientos</span>
