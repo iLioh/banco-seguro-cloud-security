@@ -1,33 +1,21 @@
 param location string
-param appName string
+param internalApiName string
+param appServicePlanName string
 param integrationSubnetId string
 param keyVaultName string
 param keyVaultUri string
-param sqlServerFqdn string
-param databaseName string
 param applicationInsightsConnectionString string
 param logAnalyticsWorkspaceId string
-param internalApiBaseUrl string
+param restrictPublicNetworkAccess bool = false
 
 var keyVaultSecretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
 
-resource plan 'Microsoft.Web/serverfarms@2023-12-01' = {
-  name: 'asp-bancoseguro-dev'
-  location: location
-  kind: 'linux'
-  sku: {
-    name: 'B1'
-    tier: 'Basic'
-    size: 'B1'
-    capacity: 1
-  }
-  properties: {
-    reserved: true
-  }
+resource plan 'Microsoft.Web/serverfarms@2023-12-01' existing = {
+  name: appServicePlanName
 }
 
-resource app 'Microsoft.Web/sites@2023-12-01' = {
-  name: appName
+resource internalApi 'Microsoft.Web/sites@2023-12-01' = {
+  name: internalApiName
   location: location
   kind: 'app,linux'
   identity: {
@@ -38,7 +26,7 @@ resource app 'Microsoft.Web/sites@2023-12-01' = {
     httpsOnly: true
     virtualNetworkSubnetId: integrationSubnetId
     vnetRouteAllEnabled: true
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: restrictPublicNetworkAccess ? 'Disabled' : 'Enabled'
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|10.0'
       alwaysOn: false
@@ -46,23 +34,11 @@ resource app 'Microsoft.Web/sites@2023-12-01' = {
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       http20Enabled: true
-      healthCheckPath: '/health'
+      healthCheckPath: '/healthz'
       appSettings: [
         {
           name: 'Azure__KeyVaultUri'
           value: keyVaultUri
-        }
-        {
-          name: 'Database__Server'
-          value: sqlServerFqdn
-        }
-        {
-          name: 'Database__Database'
-          value: databaseName
-        }
-        {
-          name: 'InternalApi__BaseUrl'
-          value: internalApiBaseUrl
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -86,18 +62,21 @@ resource vault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
 }
 
 resource keyVaultSecretsUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(vault.id, app.id, keyVaultSecretsUserRoleId)
+  name: guid(vault.id, internalApi.id, keyVaultSecretsUserRoleId)
   scope: vault
   properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', keyVaultSecretsUserRoleId)
-    principalId: app.identity.principalId
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      keyVaultSecretsUserRoleId
+    )
+    principalId: internalApi.identity.principalId
     principalType: 'ServicePrincipal'
   }
 }
 
 resource diagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'diag-appservice-to-law'
-  scope: app
+  name: 'diag-internalapi-to-law'
+  scope: internalApi
   properties: {
     workspaceId: logAnalyticsWorkspaceId
     logs: [
@@ -127,8 +106,7 @@ resource diagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' 
   }
 }
 
-output appName string = app.name
-output appId string = app.id
-output principalId string = app.identity.principalId
-output appUrl string = 'https://${app.properties.defaultHostName}'
-
+output appName string = internalApi.name
+output appId string = internalApi.id
+output principalId string = internalApi.identity.principalId
+output appUrl string = 'https://${internalApi.properties.defaultHostName}'

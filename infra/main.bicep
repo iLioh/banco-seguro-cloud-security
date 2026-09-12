@@ -23,6 +23,8 @@ param sqlEntraAdminLogin string
 
 var suffix = uniqueString(subscription().id, resourceGroupName)
 var appName = 'app-bancoseguro-dev-${suffix}'
+var internalApiName = 'api-bancoseguro-dev-${suffix}'
+var internalApiBaseUrl = 'https://${internalApiName}.azurewebsites.net/'
 var keyVaultName = 'kv-bs-dev-${suffix}'
 var sqlServerName = 'sql-bancoseguro-dev-${suffix}'
 
@@ -86,6 +88,26 @@ module appService 'modules/appservice.bicep' = {
     databaseName: sql.outputs.databaseName
     applicationInsightsConnectionString: monitoring.outputs.applicationInsightsConnectionString
     logAnalyticsWorkspaceId: monitoring.outputs.workspaceId
+    internalApiBaseUrl: internalApiBaseUrl
+  }
+}
+
+module internalApi 'modules/internal-api.bicep' = {
+  name: 'internalApi'
+  scope: resourceGroup
+  dependsOn: [
+    appService
+  ]
+  params: {
+    location: location
+    internalApiName: internalApiName
+    appServicePlanName: 'asp-bancoseguro-dev'
+    integrationSubnetId: network.outputs.appServiceIntegrationSubnetId
+    keyVaultName: keyVaultName
+    keyVaultUri: keyVault.outputs.vaultUri
+    applicationInsightsConnectionString: monitoring.outputs.applicationInsightsConnectionString
+    logAnalyticsWorkspaceId: monitoring.outputs.workspaceId
+    restrictPublicNetworkAccess: false
   }
 }
 
@@ -112,6 +134,8 @@ module sentinel 'modules/sentinel.bicep' = {
 output resourceGroupName string = resourceGroup.name
 output appServiceName string = appService.outputs.appName
 output appServiceUrl string = appService.outputs.appUrl
+output internalApiName string = internalApi.outputs.appName
+output internalApiUrl string = internalApi.outputs.appUrl
 output keyVaultName string = keyVault.outputs.vaultName
 output sqlServerName string = sql.outputs.serverName
 output sqlDatabaseName string = sql.outputs.databaseName
